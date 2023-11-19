@@ -6,15 +6,11 @@ from app.misc.logger import logger
 from app.settings.config import load_config
 from app.services.db.db_models import create_db
 
-pool = None
-
 
 def register_all_routes():
     ...
 
-
 async def main():
-    global pool
     logger.info("Starting app")
 
     config = load_config(".env")
