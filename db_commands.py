@@ -1,5 +1,6 @@
-from app.services.db.db_models import User
+from main import pool
 
 class DBCommands:
     async def get_all_users(self):
-        return await User.query.gino.all()
+        #with pool.acquire() as conn:
+        #    ...
