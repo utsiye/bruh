@@ -1,15 +1,18 @@
 import asyncio
 import uvicorn
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 
 from app.misc.logger import logger
 from app.settings.config import load_config
 from app.services.db.db_models import create_db
-from app.services.db.db_commands import DBCommands
+from app.routers.register import api_router as register_router
+from bla import db_plug # пустая функция
 
 
-
+def include_all_routers(app):
+    app.include_router(register_router)
+    ...
 
 async def main():
     logger.info("Starting app")
@@ -19,8 +22,9 @@ async def main():
     pool = create_db()
     app = FastAPI()
 
-    db =  DBCommands(pool)
-    app.dependency_overrides[DBCommands] = lambda: db
+    app.dependency_overrides[db_plug] = lambda: pool
+
+    include_all_routers(app)
 
     return app
 
