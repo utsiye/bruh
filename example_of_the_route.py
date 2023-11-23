@@ -1,10 +1,14 @@
-from fastapi import FastAPI, Depends
+from fastapi import APIRouter, Request
+from asyncpg import Pool as Pool
 
 from app.services.db.db_commands import DBCommands
+from app.misc.models.user import User
+from bla import db_plug
 
-async def register_user_route(db: DBCommands = Depends()):
-  ...
+db = DBCommands()
+api_router = APIRouter()
 
-
-def register_route(app: FastAPI):
-    app.add_route("/register", register_user_route, ['GET'])
+@api_router.post('/register/')
+async def register_route(user: User) -> dict:
+    user = await db.get_or_create_user(login=user.login, password=user.password)
+    return user
