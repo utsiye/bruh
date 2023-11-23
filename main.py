@@ -1,13 +1,18 @@
 import asyncio
+import uvicorn
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 
 from app.misc.logger import logger
 from app.settings.config import load_config
 from app.services.db.db_models import create_db
 
 
-def register_all_routes():
+
+class poolPlug():
+    ...
+
+class appPlug():
     ...
 
 async def main():
@@ -15,15 +20,20 @@ async def main():
 
     config = load_config(".env")
 
-    pool = await create_db()
-
+    pool = create_db()
     app = FastAPI()
-    register_all_routes()
+    app.dependency_overrides[poolPlug] = lambda: pool
+    app.dependency_overrides[appPlug] = lambda: app
+
+    return app
+
 
 
 
 if __name__ == '__main__':
     try:
-        asyncio.run(main())
+        app = asyncio.run(main())
+        uvicorn.run(app, host="0.0.0.0", port=80)
+
     except (KeyboardInterrupt, SystemExit):
-        logger.error("App is stopped")
+        logger.error("API stopped")
