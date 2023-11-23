@@ -6,14 +6,10 @@ from fastapi import FastAPI, Depends
 from app.misc.logger import logger
 from app.settings.config import load_config
 from app.services.db.db_models import create_db
+from app.services.db.db_commands import DBCommands
 
 
 
-class poolPlug():
-    ...
-
-class appPlug():
-    ...
 
 async def main():
     logger.info("Starting app")
@@ -22,8 +18,9 @@ async def main():
 
     pool = create_db()
     app = FastAPI()
-    app.dependency_overrides[poolPlug] = lambda: pool
-    app.dependency_overrides[appPlug] = lambda: app
+
+    db =  DBCommands(pool)
+    app.dependency_overrides[DBCommands] = lambda: db
 
     return app
 
